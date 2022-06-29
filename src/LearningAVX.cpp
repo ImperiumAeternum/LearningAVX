@@ -141,7 +141,7 @@ int main()
     _AVX_add_int32_aligned_vectors(alvec1, alvec2);
     auto t12 = time.add();
     auto t1 = time.add();
-    _AVX_add_int32_vectors(vec1, vec2);
+    //_AVX_add_int32_vectors(vec1, vec2);
     auto t2 = time.add();
     for (auto i = 0; i < vec1.size(); i++) {
         vec1[i] += vec2[i];
@@ -151,7 +151,7 @@ int main()
         vec1[i] += vec2[i];
     }
     auto t4 = time.add();
-    _AVX_substract_int32_vectors(vec1, vec2);
+    //_AVX_substract_int32_vectors(vec1, vec2);
     auto t5 = time.add();
     time.show(t11, t12);
     time.show(t1, t2);
