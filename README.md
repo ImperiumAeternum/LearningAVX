@@ -7,7 +7,7 @@ Basic arithmetic operations (addition, substraction, multiplication and division
 
 Previously created separate functions, each of which providing only 1 arithmetic operations kept for comparison only purposes. They use both aligned and unaligned vectors with AVX aligned/unaligned load & store respectively.
 
-Measumerments taken using std::chrono::steady_clock shows that created AVX2 functions speeds up arithmetic operations about 6-7X times. Let's take on example with 2 vectors consisting of 1 millions elements each.
+Measurements taken using std::chrono::steady_clock shows that created AVX2 functions speeds up arithmetic operations about 6-7X times. Let's take on example with 2 vectors consisting of 1 millions elements each.
 
     _AVX_compute_int32_vectors(vec1, vec2, &AVX::add, &Arithmetic::add);
     //5087 microseconds
