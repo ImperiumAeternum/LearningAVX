@@ -2,7 +2,7 @@
 #pragma warning(disable:4146)
 #ifndef ALIGNED_VECTOR_HPP_
 #define ALIGNED_VECTOR_HPP_
-
+//https://github.com/isovic/aligned_vector
 #include <cmath>
 #include <functional>
 #include <memory>
