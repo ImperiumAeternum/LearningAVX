@@ -14,26 +14,58 @@ typedef std::chrono::steady_clock::time_point tp;
 
 class Time {
 public:
-    static void show(tp t1, tp t2);
-    tp add();
+    static void show(tp t1, tp t2) { //time passed since t1
+        std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << '\t';
+        printf("nanoseconds \n");
+    }
+    tp add() {
+        tp p = std::chrono::steady_clock::now();
+        return p;
+    }
 };
+
 static class Arithmetic
 {
 public:
-    static void add(vector <int>& v1, const vector <int>& v2);
-    static void sub(vector <int>& v1, const vector <int>& v2);
-    static void mullo(vector <int>& v1, const vector <int>& v2);
-    static void div(vector <int>& v1, const vector <int>& v2);
+    static void add(vector <int>& v1, const vector <int>& v2) {
+        for (auto i = v1.size() - v1.size() % 8; i < v1.size(); ++i) {
+            v1[i] += v2[i];
+        }
+    }
+    static void sub(vector <int>& v1, const vector <int>& v2) {
+        for (auto i = v1.size() - v1.size() % 8; i < v1.size(); ++i) {
+            v1[i] -= v2[i];
+        }
+    }
+    static void mullo(vector <int>& v1, const vector <int>& v2) {
+        for (auto i = v1.size() - v1.size() % 8; i < v1.size(); ++i) {
+            v1[i] *= v2[i];
+        }
+    }
+    static void div(vector <int>& v1, const vector <int>& v2) {
+        for (auto i = v1.size() - v1.size() % 8; i < v1.size(); ++i) {
+            v1[i] /= v2[i];
+        }
+    }
 private:
     Arithmetic() {}
 };
+
 static class AVX
 {
 public:
-    static __m256i add(__m256i _a, __m256i _b);
-    static __m256i sub(__m256i _a, __m256i _b);
-    static __m256i mullo(__m256i _a, __m256i _b);
-    static __m256i div(__m256i _a, __m256i _b);
+    static __m256i add(__m256i _a, __m256i _b) {
+        return (_mm256_add_epi32(_a, _b));
+    }
+    static __m256i sub(__m256i _a, __m256i _b) {
+        return (_mm256_sub_epi32(_a, _b));
+    }
+    static __m256i mullo(__m256i _a, __m256i _b) {
+        return _mm256_mullo_epi32(_a, _b);
+    }
+    static __m256i div(__m256i _a, __m256i _b) {
+        return _mm256_div_epi32(_a, _b);
+    }
 private:
     AVX() {}
 };
@@ -265,49 +297,3 @@ void _AVX_compute_int32_vectors(vector <int>& v1, vector <int>& v2,
     }
     compute_last(v1, v2);
 }
-
-static class Arithmetic
-{
-public:
-    static void add(vector <int>& v1, const vector <int>& v2) {
-        for (auto i = v1.size() - v1.size() % 8; i < v1.size(); ++i) {
-            v1[i] += v2[i];
-        }
-    }
-    static void sub(vector <int>& v1, const vector <int>& v2) {
-        for (auto i = v1.size() - v1.size() % 8; i < v1.size(); ++i) {
-            v1[i] -= v2[i];
-        }
-    }
-    static void mullo(vector <int>& v1, const vector <int>& v2) {
-        for (auto i = v1.size() - v1.size() % 8; i < v1.size(); ++i) {
-            v1[i] *= v2[i];
-        }
-    }
-    static void div(vector <int>& v1, const vector <int>& v2) {
-        for (auto i = v1.size() - v1.size() % 8; i < v1.size(); ++i) {
-            v1[i] /= v2[i];
-        }
-    }
-private:
-    Arithmetic() {}
-};
-
-static class AVX
-{
-public:
-    static __m256i add(__m256i _a, __m256i _b) {
-        return (_mm256_add_epi32(_a, _b));
-    }
-    static __m256i sub(__m256i _a, __m256i _b) {
-        return (_mm256_sub_epi32(_a, _b));
-    }
-    static __m256i mullo(__m256i _a, __m256i _b) {
-        return _mm256_mullo_epi32(_a, _b);
-    }
-    static __m256i div(__m256i _a, __m256i _b) {
-        return _mm256_div_epi32(_a, _b);
-    }
-private:
-    AVX() {}
-};
