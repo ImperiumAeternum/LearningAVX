@@ -24,7 +24,7 @@ public:
     }
 };
 
-static class Arithmetic
+class Arithmetic
 {
 public:
     static void add(vector <int>& v1, const vector <int>& v2) {
@@ -51,7 +51,7 @@ private:
     Arithmetic() {}
 };
 
-static class AVX
+class AVX
 {
 public:
     static __m256i add(__m256i _a, __m256i _b) {
@@ -70,6 +70,9 @@ private:
     AVX() {}
 };
 
+void _AVX_compute_int32_vectors(vector <int>& v1, vector <int>& v2,
+    __m256i compute(__m256i, __m256i),
+    void compute_last(vector <int>&, const vector <int>&));
 void _AVX_add_int32_vectors(vector <int>& v1, vector <int>& v2); //long, but fast
 void _AVX_add_int32_vectors_slow(vector <int>& v1, vector <int>& v2); //simple, but slow 
 void _AVX_substract_int32_vectors(vector <int>& v1, vector <int>& v2);
@@ -80,9 +83,6 @@ void _AVX_substract_int32_aligned_vectors(is::aligned_vector<int32_t, 32>& v1,
 void _AVX_multiply_int32_aligned_vectors(is::aligned_vector<int32_t, 32>& v1,
     is::aligned_vector<int32_t, 32>& v2);
 void _AVX_halved_add_int32_vectors(vector <int>& v1, vector <int>& v2); //long, but fast, not 100% AVX
-void _AVX_compute_int32_vectors(vector <int>& v1, vector <int>& v2,
-    __m256i compute(__m256i, __m256i),
-    void compute_last(vector <int>&, const vector <int>&));
 
 int main()
 {
@@ -105,7 +105,7 @@ int main()
     _AVX_add_int32_vectors(vec1, vec2);
     auto t3 = time.add();
     _AVX_halved_add_int32_vectors(vec1, vec2);
-   // _AVX_add_int32_vectors_slow(vec1, vec2);
+    // _AVX_add_int32_vectors_slow(vec1, vec2);
     auto t4 = time.add();
     for (auto i = 0; i < vec1.size(); ++i) {
         vec1[i] += vec2[i];
@@ -117,10 +117,21 @@ int main()
     time.show(t3, t4);
     time.show(t4, t5);
     //cout << SHTMAX << endl;
-	return 0;
+    return 0;
 }
 
 
+void _AVX_compute_int32_vectors(vector <int>& v1, vector <int>& v2,
+    __m256i compute(__m256i, __m256i),
+    void compute_last(vector <int>&, const vector <int>&)) {
+    for (auto i = 0; i < v1.size() - 8; i += 8) {
+        __m256i _vect1 = _mm256_loadu_si256((__m256i*) & v1[i]);
+        __m256i _vect2 = _mm256_loadu_si256((__m256i*) & v2[i]);
+        _vect1 = compute(_vect1, _vect2);
+        _mm256_storeu_si256((__m256i*) & v1[i], _vect1);
+    }
+    compute_last(v1, v2);
+}
 void _AVX_add_int32_vectors(vector <int>& v1, vector <int>& v2) { //long, but fast
     /*basically does
     for (auto i = 0; i < v1.size(); i++) {
@@ -284,16 +295,4 @@ void _AVX_halved_add_int32_vectors(vector <int>& v1, vector <int>& v2) { //long,
     for (auto i = v1.size() - v1.size() % 8; i < v1.size(); ++i) { //last
         v1[i] += v2[i]; //not AVX, but same speed as masked-AVX
     }
-}
-
-void _AVX_compute_int32_vectors(vector <int>& v1, vector <int>& v2,
-    __m256i compute(__m256i, __m256i),
-    void compute_last(vector <int>&, const vector <int>&)) {
-    for (auto i = 0; i < v1.size() - 8; i += 8) {
-        __m256i _vect1 = _mm256_loadu_si256((__m256i*) & v1[i]);
-        __m256i _vect2 = _mm256_loadu_si256((__m256i*) & v2[i]);
-        _vect1 = compute(_vect1, _vect2);
-        _mm256_storeu_si256((__m256i*) & v1[i], _vect1);
-    }
-    compute_last(v1, v2);
 }
