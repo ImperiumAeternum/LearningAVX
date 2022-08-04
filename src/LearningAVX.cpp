@@ -63,9 +63,9 @@ public:
     static __m256i mullo(__m256i _a, __m256i _b) {
         return _mm256_mullo_epi32(_a, _b);
     }
-    static __m256i div(__m256i _a, __m256i _b) {
+    /*static __m256i div(__m256i _a, __m256i _b) { //uses Intel library, only Intel & Microsoft compiler compatible
         return _mm256_div_epi32(_a, _b);
-    }
+    }*/ 
 private:
     AVX() {}
 };
